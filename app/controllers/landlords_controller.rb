@@ -1,8 +1,6 @@
 class LandlordsController < ApplicationController
   skip_before_action :authenticate_request, only: [:create, :login]
   skip_before_action :authenticate_customer
-
-  
   
  def create 
 		@user=Landlord.new(set_params)
@@ -28,20 +26,15 @@ class LandlordsController < ApplicationController
   end
 
   def update
-    #if params[:id].to_i == @current_landlord.id
-      if @current_landlord.update(set_params) 
-          render json: @current_landlord, status: :ok 
-      else
-        render json: {data: @current_landlord
-          .errors.full_messages, status: "Upadation of LandLord Failed"}, status: :unprocessable_entity
-      end
-    # else 
-    #   render json: {error: "Landlord id Invalid"}
-    # end
-  end
+    if @current_landlord.update(set_params) 
+        render json: @current_landlord, status: :ok 
+    else
+      render json: {data: @current_landlord
+        .errors.full_messages, status: "Upadation of LandLord Failed"}, status: :unprocessable_entity
+    end
+ end
 
   def destroy
-    #if params[:id].to_i == @current_landlord.id
     if @current_landlord.destroy
       render json: { message: 'LandLord Deleted' }, status: :ok
     else 

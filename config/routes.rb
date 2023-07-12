@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   #landlord
-  # post 'landlords/create'
+  
   get 'landlord_login' => "landlords#login"
   post 'show_name' =>  "landlords#show_name"
   post 'landlord_show_by_location' => "landlords#show_by_location"
@@ -19,7 +19,7 @@ Rails.application.routes.draw do
   post "show_booking_location" => "customers#show_booking_location"
   get "particular_detail/:id" => "customers#particular_detail"
   post "see_particular_room_wit_hotel" => "customers#see_particular_room_wit_hotel"
-  resources :customers
+  resource :customers
 
   #motel
   resources :motels

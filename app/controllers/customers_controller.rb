@@ -34,11 +34,10 @@ class CustomersController < ApplicationController
   end
 
   def destroy
-    if params[:id].to_i == @current_customer.id
-    @current_customer.destroy
+    if  @current_customer.destroy
     render json: { message: 'Customer Deleted' }, status: :ok
     else 
-      render json: {error: "Customer id Invalid"}
+      render json: {error: "Customer Not deleted"}
     end
   end
 
