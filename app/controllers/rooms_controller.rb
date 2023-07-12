@@ -41,19 +41,6 @@ class RoomsController < ApplicationController
     end
 	end
 
-	# def update
-    
-  #     check = Room.find_by(id: params[:id])
-  #     if check.update(set_params)
-  #       render json:{message: "Room update"}, status: :ok 
-  #     else
-  #       render json: {error: check.errors.full_messages ,status: "Upadation of Room Failed"}, status: :unprocessable_entity
-  #     end
-    
-  # rescue NoMethodError
-  #   render json: {error: "Id not found"}
-  # end
-
   def update
     room = Room.find_by(id: params[:id])
     if !(room.nil?)

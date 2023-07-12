@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   post 'landlord_show_rooms_with_hotel' => "landlords#show_rooms_with_hotel"
   get "show_hotels" => "landlords#show_hotels"
   resource :landlords
+  
   #customer
   #post 'customer/create'
   get 'customer_login' => 'customers#login'
@@ -23,7 +24,7 @@ Rails.application.routes.draw do
 
   #motel
   resources :motels
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  
   #Rooms
   post "room_created_by_location" => "rooms#room_created_by_location"
   resources :rooms

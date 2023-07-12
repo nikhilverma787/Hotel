@@ -17,6 +17,7 @@ class ApplicationController < ActionController::API
       render json: {data: e, error: "First Login Yourself"}
     end
   end
+
   def authenticate_customer
     begin
       header = request.headers["Authorization"]
@@ -27,4 +28,5 @@ class ApplicationController < ActionController::API
       render json: {data: e, error: "First Login Yourself"}
     end 
   end
+  
 end

@@ -1,7 +1,6 @@
 class MotelsController < ApplicationController
   before_action :authenticate_request
   skip_before_action :authenticate_customer
-
  
   def create 
     if params[:location]  
