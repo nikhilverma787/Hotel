@@ -1,14 +1,16 @@
 class BookingsController < ApplicationController
-	before_action :authenticate_customer
-  skip_before_action :authenticate_request
+	before_action :authenticate_request
+  before_action :customer_check
+  skip_before_action :landlord_check
 	
 	def create
 		count = true
 		bookings_params.each do |book_param|
-			if hotel = Motel.find_by(name: book_param[:hotel])
-				if room_type = Room.find_by(category: book_param[:room_type], status: "available", motel_id: hotel.id)
+			if hotel = Motel.find_by(id: book_param[:motel_id])
+				if room_type = Room.find_by(category: book_param[:room_type], status: "available", motel_id: book_param[:motel_id],id: book_param[:room_id])
+					#Room.where(id: 1, category: "deluxe",motel_id: 1, status: "available")
 					if (book_param[:total_person]).to_i <= (room_type.limit).to_i 
-						booking = @current_customer.bookings.build(book_param.permit(:name, :contact, :total_person, :hotel, :user_id).merge(room_id: room_type.id))
+						booking = @current_user.bookings.build(book_param.permit(:name, :contact, :total_person, :user_id, :motel_id, :room_id))
 						if booking.save
 							room_type.update(status: "booked")
 						else
@@ -38,20 +40,15 @@ class BookingsController < ApplicationController
 	end
 
 	def update
-		check = @current_customer.bookings.find_by(id: params[:id])
-    if !(check.nil?)
-      if check.update(name: params[:name], contact: params[:contact],total_person: params[:total_person],hotel: params[:hotel])
-        render json:{message: "Booking update"}, status: :ok 
-      else
-        render json: {datra: check.errors.full_messages,status: "Upadation of Booking Failed"}, status: :unprocessable_entity
-      end
-    else
-      render json: {status: "Invalid Ids"}, status: :unprocessable_entity
-    end
+		check = @current_user.bookings.find_by(id: params[:id])
+    return render json: {status: "Invalid Ids"}, status: :unprocessable_entity unless (check.present?)
+    
+     return render json:{message: "Booking update"}, status: :ok  if check.update(name: params[:name], contact: params[:contact],total_person: params[:total_person])
+        render json: {datra: check.errors.full_messages,status: "Upadation of Booking Failed"}, status: :unprocessable_entity      
   end
 
   def destroy
-		book=@current_customer.bookings.find_by(id: params[:id])
+		book=@current_user.bookings.find_by(id: params[:id])
 		if !(book.nil?)
 			if params[:id].to_i == book.id
 				book.destroy
@@ -65,7 +62,7 @@ class BookingsController < ApplicationController
 	private
 	
 	def bookings_params
-    params.require(:bookings).map { |booking_param| booking_param.permit(:name, :contact, :total_person,:room_type,:user_id,:hotel)}
+    params.require(:bookings).map { |booking_param| booking_param.permit(:name, :contact, :total_person,:room_type,:user_id,:motel_id,:room_id)}
   end
 end	
 

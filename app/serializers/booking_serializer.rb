@@ -1,3 +1,3 @@
 class BookingSerializer < ActiveModel::Serializer
-  attributes :id,:name,:contact,:total_person,:hotel
+  attributes :id,:name,:contact,:total_person
 end

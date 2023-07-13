@@ -1,4 +1,5 @@
 class Room < ApplicationRecord
+	paginates_per 2
 	belongs_to :motel
 	has_many :bookings
 

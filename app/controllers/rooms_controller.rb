@@ -1,37 +1,30 @@
 class RoomsController < ApplicationController
 	before_action :authenticate_request
-  skip_before_action :authenticate_customer
-  
+  skip_before_action :customer_check
+  before_action :landlord_check
   def create 
-    if params[:hotel] 
-      if check =  @current_landlord.motels.find_by(name: params[:hotel].strip.capitalize)
-        room=Room.new((set_params).merge(motel_id: check.id))
-        if room.save 
-          render json: room, status: :ok
-        else
+    return render json: {error: "Hotel Field can't Found"} unless params[:motel_id].present? 
+
+      return render json: {error: "You have not Owner of that Motel"}, status: :unprocessable_entity  unless check =  @current_user.motels.find_by(id: params[:motel_id])
+        room=Room.new(set_params)
+
+        return render json: room, status: :ok if room.save 
           render json: {data: room.errors.full_messages, status: "Room Creation Failed"}, status: :unprocessable_entity
-        end
-      else
-        render json: {error: "You have not Owner of #{params[:hotel]}"}, status: :unprocessable_entity
-      end
-    else 
-      render json: {error: "Hotel Field can't Found"}
-    end
 	end
 
   def room_created_by_location 
     if params[:hotel] && params[:location]
       locate= Location.find_by(city: params[:location])
       if !(locate.nil?)
-        if check =  @current_landlord.motels.find_by(name: params[:hotel], )
-          room=Room.new((set_params).merge(motel_id: check.id))
+        if check =  @current_user.motels.find_by(name: params[:hotel], )
+          room=Room.new(set_params)
           if room.save 
             render json: room, status: :ok
           else
             render json: {data: room.errors.full_messages, status: "Room Creation Failed"}, status: :unprocessable_entity
           end
         else
-          render json: {error: "You have not Owner of #{params[:hotel]}"}, status: :unprocessable_entity
+          render json: {error: "You have not Owner"}, status: :unprocessable_entity
         end
       else
         render json: {error: "Location Invalid"}, status: :unprocessable_entity
@@ -46,7 +39,7 @@ class RoomsController < ApplicationController
     if !(room.nil?)
       motel = Motel.find_by(id: room.motel_id)
       if !(motel.nil?)
-        check= @current_landlord.id == motel.user_id 
+        check= @current_user.id == motel.user_id 
         if check
           room.update(set_params)
           render json: {message: "Room update"}
@@ -66,7 +59,7 @@ class RoomsController < ApplicationController
     if !(room.nil?)
       motel = Motel.find_by(id: room.motel_id)
       if !(motel.nil?)
-        check= @current_landlord.id == motel.user_id 
+        check= @current_user.id == motel.user_id 
         if check
           room.destroy
           render json: {message: "Room Delete"}
@@ -83,6 +76,6 @@ class RoomsController < ApplicationController
 
   private
   def set_params 
-    params.permit(:room_number, :category, :limit, :status)
+    params.permit(:room_number, :category, :limit, :status, :motel_id)
   end
 end
