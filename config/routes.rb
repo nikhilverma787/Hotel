@@ -33,7 +33,7 @@ Rails.application.routes.draw do
 
   #motel
   #  delete "motels/:id" => "motels#ok"
-  resource :motels
+  resources :motels
   
   #Rooms
   post "room_created_by_location" => "rooms#room_created_by_location"

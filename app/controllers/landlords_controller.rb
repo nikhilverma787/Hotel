@@ -1,47 +1,9 @@
-class LandlordsController < ApplicationController
+class LandlordsController < ApiController
   before_action :authenticate_request
-  skip_before_action :customer_check
-  before_action :landlord_check
-  
-#  def create 
-# 		user=Landlord.new(set_params)
-# 		if user.save 
-# 			render json: user, status: :ok
-# 		else
-# 			render json: {data: user.errors.full_messages, status: "Registration Failed"}, status: :unprocessable_entity
-# 		end
-# 	end
-
-#   def login
-#     if params[:username] && params[:password]
-#     user = Landlord.find_by(username: params[:username],password: params[:password])
-#       if user
-#         token = jwt_encode(owner_id: user.id)
-#         render json: {token: token}, status: :ok
-#       else
-#         render json: {error: "Unauthorized"}, status: :unauthorized
-#       end
-#     else
-#       render json: { error: 'Username and Passwor field Can not Found' }, status: :unprocessable_entity
-#     end
-#   end
-
-#   def update
-#     return render json: @current_user, status: :ok if @current_user.update(set_params) 
-#       render json: { data: @current_user
-#         .errors.full_messages, status: 'Upadation of LandLord Failed' }, status: :unprocessable_entity
-#  end
-
-#  def destroy
-#   return render json: { message: 'LandLord Deleted' }, status: :ok if @current_user.destroy
-#     render json: { error: 'Landlord id Invalid' }
-# end
-
-#   def show
-#     render json: @current_user
-#   end
+  before_action :check_auth
   
   def show_hotels
+    authorize User
     check = @current_user.motels
     return render json: check.page(params[:page]).per(params[:per_page]) unless (check.empty?) 
       render json: {error: "Hotel not Found"}
@@ -78,7 +40,7 @@ class LandlordsController < ApplicationController
   end
 
   def show_bookings_in_motel
-     return render json: { error: 'Motel Field not found' } unless params[:motel_id].present?
+    return render json: { error: 'Motel Field not found' } unless params[:motel_id].present?
       check = Motel.find_by(id: params[:motel_id],user_id: @current_user.id)
 
       return render json: { error: 'Hotel not Found' } if check.nil?
@@ -105,5 +67,9 @@ class LandlordsController < ApplicationController
 
   def set_params 
     params.permit(:type,:name,:username,:password,:mobile)
+  end
+
+   def check_auth
+    authorize User
   end
 end

@@ -1,8 +1,7 @@
-class BookingsController < ApplicationController
+class BookingsController < ApiController
 	before_action :authenticate_request
-  before_action :customer_check
-  skip_before_action :landlord_check
-	
+  before_action :check_auth
+  
 	def create
 		count = true
 		bookings_params.each do |book_param|
@@ -63,6 +62,9 @@ class BookingsController < ApplicationController
 	
 	def bookings_params
     params.require(:bookings).map { |booking_param| booking_param.permit(:name, :contact, :total_person,:room_type,:user_id,:motel_id,:room_id)}
+  end
+  def check_auth
+  	authorize Booking
   end
 end	
 

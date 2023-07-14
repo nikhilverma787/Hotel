@@ -27,6 +27,7 @@ gem "puma", "~> 5.0"
  gem "byebug"
  gem "active_model_serializers"
  gem 'kaminari'
+ gem 'pundit'
  
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

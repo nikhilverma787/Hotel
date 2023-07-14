@@ -1,7 +1,6 @@
-class MotelsController < ApplicationController
+class MotelsController < ApiController
   before_action :authenticate_request
-  skip_before_action :customer_check
-  before_action :landlord_check
+  before_action :check_auth
   def create 
     return render json: {error: "Location field can't Found"} unless params[:location_id].present?  
       locate=Location.find_by(id: params[:location_id])
@@ -45,5 +44,7 @@ class MotelsController < ApplicationController
   def set_params 
     params.permit(:name, :address, :contact, :status,:image,:location_id)
   end
-
+   def check_auth
+    authorize Motel
+  end
 end

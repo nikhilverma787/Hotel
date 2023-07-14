@@ -1,7 +1,7 @@
-class RoomsController < ApplicationController
+class RoomsController < ApiController
 	before_action :authenticate_request
-  skip_before_action :customer_check
-  before_action :landlord_check
+  before_action :check_auth
+  
   def create 
     return render json: {error: "Hotel Field can't Found"} unless params[:motel_id].present? 
 
@@ -77,5 +77,9 @@ class RoomsController < ApplicationController
   private
   def set_params 
     params.permit(:room_number, :category, :limit, :status, :motel_id)
+  end
+
+   def check_auth
+    authorize Room
   end
 end

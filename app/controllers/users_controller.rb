@@ -1,7 +1,5 @@
-class UsersController < ApplicationController
-  skip_before_action :landlord_check, only: [:create,:login]
-  skip_before_action :customer_check
-	skip_before_action :authenticate_request, only: [:create,:login]
+class UsersController < ApiController
+  skip_before_action :authenticate_request, only: [:create,:login]
 
 	def create 
 		user=User.new(set_params)
@@ -14,7 +12,7 @@ class UsersController < ApplicationController
 
   def login
     if params[:username] && params[:password_digest]
-    user = User.find_by(username: params[:username],password: params[:password_digest])
+    user = User.find_by(username: params[:username],password_digest: params[:password_digest])
       if user
         token = jwt_encode(user_id: user.id)
         render json: {token: token}, status: :ok
@@ -39,7 +37,6 @@ class UsersController < ApplicationController
  def show
   render json: @current_user
  end
-
 
   private
 
